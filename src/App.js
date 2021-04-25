@@ -161,7 +161,7 @@ class App extends Component {
                       />
                       <hr/>
                       <HighlightedMarkdown
-                        text="[什么是未名树洞？](https://www.pkuhollow.com/propaganda.html)"
+                        text="[什么是未名树洞？](https://www.pkuhollow.com/)"
                       />
                     </p>
                   </div>
