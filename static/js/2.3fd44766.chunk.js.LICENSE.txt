@@ -12,6 +12,15 @@ object-assign
 
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 
+/*!@license
+ * UAParser.js v0.7.27
+ * Lightweight JavaScript-based User-Agent string parser
+ * https://github.com/faisalman/ua-parser-js
+ *
+ * Copyright © 2012-2021 Faisal Salman <f@faisalman.com>
+ * Licensed under MIT License
+ */
+
 /** @license React v0.19.1
  * scheduler.production.min.js
  *
