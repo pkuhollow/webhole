@@ -463,7 +463,7 @@ export class ConfigUI extends PureComponent {
           <hr />
           <p>
             新功能建议或问题反馈请在&nbsp;
-            <a href="mailto:contact@pkuhollow.com" target="_blank">
+            <a href={process.env.REACT_APP_GITHUB_ISSUES_URL} target="_blank">
               GitHub <span className="icon icon-github" />
             </a>
             &nbsp;提出。

@@ -1,11 +1,11 @@
 import React, { Component, PureComponent } from 'react';
-import { format_time, Time, TitleLine } from './infrastructure/widgets';
+import { format_time, Time, TitleLine } from './old_infrastructure/widgets';
 
 import HtmlToReact from 'html-to-react';
 
 import './Common.css';
 import {
-  URL_PID_RE,
+  // URL_PID_RE,
   URL_RE,
   PID_RE,
   NICKNAME_RE,
@@ -145,7 +145,7 @@ export class HighlightedMarkdown extends Component {
         processNode(node, children, index) {
           const originalText = node.data;
           let hl_rules = [
-            ['url_pid', URL_PID_RE],
+            // ['url_pid', URL_PID_RE],
             ['url', URL_RE],
             ['pid', PID_RE],
             ['nickname', NICKNAME_RE],

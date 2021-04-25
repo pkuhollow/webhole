@@ -1,5 +1,5 @@
 import MarkdownIt from 'markdown-it';
-import MarkdownItKaTeX from 'markdown-it-katex';
+// import MarkdownItKaTeX from 'markdown-it-katex';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-dark.css';
 import './Markdown.css';
@@ -25,9 +25,9 @@ let md = new MarkdownIt({
       '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>'
     );
   },
-}).use(MarkdownItKaTeX, {
-  throwOnError: false,
-  errorColor: '#aa0000',
+// }).use(MarkdownItKaTeX, {
+//   throwOnError: false,
+//   errorColor: '#aa0000',
 });
 
 export default (text) => md.render(text);

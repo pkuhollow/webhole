@@ -1,12 +1,8 @@
-import { API_VERSION_PARAM } from './infrastructure/functions';
-import { HOLE_API_ROOT } from './infrastructure/const';
+import { API_VERSION_PARAM } from './old_infrastructure/functions';
+import { API_ROOT } from './old_infrastructure/const';
 import { cache } from './cache';
 
-export { HOLE_API_ROOT, API_VERSION_PARAM };
-
-export function token_param(token) {
-  return API_VERSION_PARAM() + (token ? '&user_token=' + token : '');
-}
+export { API_ROOT, API_VERSION_PARAM };
 
 export function get_json(res) {
   if (!res.ok) throw Error(`网络错误 ${res.status} ${res.statusText}`);
@@ -48,14 +44,18 @@ export const API = {
   load_replies: (pid, token, color_picker) => {
     pid = parseInt(pid);
     return fetch(
-      HOLE_API_ROOT + 'contents/post/detail?pid=' + pid + token_param(token),
+      API_ROOT + 'contents/post/detail?pid=' + pid + API_VERSION_PARAM(),
+      {
+        headers: {
+          TOKEN: token,
+        },
+      },
     )
       .then(get_json)
       .then((json) => {
         if (json.code !== 0) {
           throw new Error(json.msg);
         }
-
         cache().put(pid, json.post.updated_at, json);
 
         // also change load_replies_with_cache!
@@ -96,15 +96,15 @@ export const API = {
 
   set_attention: async (pid, attention, token) => {
     let data = new URLSearchParams();
-    data.append('user_token', token);
     data.append('pid', pid);
     data.append('switch', attention ? '1' : '0');
     let response = await fetch(
-      HOLE_API_ROOT + 'edit/attention?' + token_param(token),
+      API_ROOT + 'edit/attention?' + API_VERSION_PARAM(),
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          TOKEN: token,
         },
         body: data,
       },
@@ -122,11 +122,12 @@ export const API = {
     data.append('reason', reason);
     data.append('type', report_type);
     return fetch(
-      HOLE_API_ROOT + 'edit/report/' + item_type + '?' + token_param(token),
+      API_ROOT + 'edit/report/' + item_type + '?' + API_VERSION_PARAM(),
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          TOKEN: token,
         },
         body: data,
       },
@@ -141,11 +142,12 @@ export const API = {
 
   get_list: async (page, token) => {
     let response = await fetch(
-      HOLE_API_ROOT +
-        'contents/post/list' +
-        '?page=' +
-        page +
-        token_param(token),
+      API_ROOT + 'contents/post/list' + '?page=' + page + API_VERSION_PARAM(),
+      {
+        headers: {
+          TOKEN: token,
+        },
+      },
     );
     return handle_response(response);
   },
@@ -153,7 +155,7 @@ export const API = {
   get_search: async (page, keyword, token, is_attention = false) => {
     console.log(is_attention === true ? '/attentions' : '');
     let response = await fetch(
-      HOLE_API_ROOT +
+      API_ROOT +
         'contents/search' +
         (is_attention === true ? '/attentions' : '') +
         '?pagesize=' +
@@ -162,17 +164,26 @@ export const API = {
         page +
         '&keywords=' +
         encodeURIComponent(keyword) +
-        token_param(token),
+        API_VERSION_PARAM(),
+      {
+        headers: {
+          TOKEN: token,
+        },
+      },
     );
     return handle_response(response);
   },
 
   get_attention: async (page, token) => {
     let response = await fetch(
-      HOLE_API_ROOT +
+      API_ROOT +
         'contents/post/attentions?page=' +
         page +
-        token_param(token),
+        API_VERSION_PARAM(), {
+        headers: {
+          TOKEN: token,
+        },
+      },
     );
     return handle_response(response);
   },

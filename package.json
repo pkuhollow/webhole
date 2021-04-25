@@ -1,6 +1,6 @@
 {
   "name": "webhole",
-  "version": "2.2.5",
+  "version": "3.0.5",
   "private": true,
   "dependencies": {
     "copy-to-clipboard": "^3.3.1",
@@ -12,7 +12,9 @@
     "load-script": "^1.0.0",
     "markdown-it": "^12.0.2",
     "markdown-it-katex": "^2.0.3",
+    "nanoid": "^3.1.20",
     "pressure": "^2.2.0",
+    "pubsub-js": "^1.9.3",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-google-recaptcha": "^2.1.0",
@@ -20,7 +22,8 @@
     "react-imageslides": "^2.1.1",
     "react-scripts": "^3.4.4",
     "react-timeago": "^4.4.0",
-    "react-transition-group": "^4.4.1"
+    "react-transition-group": "^4.4.1",
+    "ua-parser-js": "^0.7.24"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 name: Build and Deploy
-on: [push]
+on: [ push ]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -10,25 +10,40 @@ jobs:
         with:
           persist-credentials: false
           submodules: true
-          ref: master
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch_name=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+        id: extract_branch
 
       - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+        env:
+          REPO_NAME: ${{ github.event.repository.full_name }}
+          BRANCH_NAME: ${{ env.branch_name }}
         run: |
-          export DEPLOY_BRANCH="gh-pages-master"
-          npm install
-          CDN_URL="https://cdn.jsdelivr.net/gh/pkuhollow/webhole@$DEPLOY_BRANCH"
+          if [ "$BRANCH_NAME" = "master" ]; then
+            export DEPLOY_BRANCH="gh-pages-master"
+          else
+            export DEPLOY_BRANCH="gh-pages"
+          fi
+          echo "deploy_branch=${DEPLOY_BRANCH}"  >> $GITHUB_ENV
+          CDN_URL="https://cdn.jsdelivr.net/gh/${REPO_NAME}@${DEPLOY_BRANCH}"
+          #CDN_URL="."
           VERSION_NUMBER="v$(grep -oP '"version": "\K[^"]+' package.json | head -n1)"
+          npm install
           echo "DEPLOY_BRANCH=$DEPLOY_BRANCH, VERSION_NUMBER=$VERSION_NUMBER, CDN_URL=$CDN_URL"
           CI=false PUBLIC_URL=$CDN_URL REACT_APP_BUILD_INFO=$VERSION_NUMBER npm run build
-          sed -i 's|https://cdn.jsdelivr.net/gh/pkuhollow/webhole@'"$DEPLOY_BRANCH"'/index.html|./index.html|g' build/*-*
-          sed -i 's|https://cdn.jsdelivr.net/gh/pkuhollow/webhole@'"$DEPLOY_BRANCH"'/service-worker.js|./service-worker.js|g' build/*-*
-          sed -i 's|"https://cdn.jsdelivr.net/gh/pkuhollow/webhole@'"$DEPLOY_BRANCH"'","/service-worker.js"|".","/service-worker.js"|' build/static/js/*.js
+          ## 额，这里用了个骚操作来修复Service Worker在Precache CDN内容的时候index.html返回content-type text/plain的问题
+          sed -i 's|https://cdn.jsdelivr.net/gh/'"${REPO_NAME}"'@'"$DEPLOY_BRANCH"'/index.html|./index.html|g' build/*-*
+          sed -i 's|https://cdn.jsdelivr.net/gh/'"${REPO_NAME}"'@'"$DEPLOY_BRANCH"'/service-worker.js|./service-worker.js|g' build/*-*
+          sed -i 's|"https://cdn.jsdelivr.net/gh/'"${REPO_NAME}"'@'"$DEPLOY_BRANCH"'","/service-worker.js"|".","/service-worker.js"|' build/static/js/*.js
           sed -i 's|storage.googleapis.com/workbox-cdn/releases/4.3.1|cdn.jsdelivr.net/npm/workbox-cdn@4.3.1/workbox|g' build/service-worker.js
-          
+
       - name: Deploy 🚀
+        if: github.event_name != 'pull_request'
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages-master # The branch the action should deploy to.
+          BRANCH: ${{ env.deploy_branch }} # The branch the action should deploy to.
           FOLDER: build # The folder the action should deploy.
           CLEAN: true # Automatically remove deleted files from the deploy branch

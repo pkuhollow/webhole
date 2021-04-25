@@ -48,22 +48,25 @@ class ControlBar extends PureComponent {
     if (event.key === 'Enter') {
       let flag_res = flag_re.exec(this.state.search_text);
       if (flag_res) {
-        if (flag_res[2]) {
-          localStorage[flag_res[1]] = flag_res[2];
-          alert(
-            'Set Flag ' +
-              flag_res[1] +
-              '=' +
-              flag_res[2] +
-              '\nYou may need to refresh this webpage.',
-          );
-        } else {
-          delete localStorage[flag_res[1]];
-          alert(
-            'Clear Flag ' +
-              flag_res[1] +
-              '\nYou may need to refresh this webpage.',
-          );
+        let r = confirm('Please confirm:\n' + this.state.search_text);
+        if (r === true) {
+          if (flag_res[2]) {
+            localStorage[flag_res[1]] = flag_res[2];
+            alert(
+              'Set Flag ' +
+                flag_res[1] +
+                '=' +
+                flag_res[2] +
+                '\nYou may need to refresh this webpage.',
+            );
+          } else {
+            delete localStorage[flag_res[1]];
+            alert(
+              'Clear Flag ' +
+                flag_res[1] +
+                '\nYou may need to refresh this webpage.',
+            );
+          }
         }
         return;
       }
